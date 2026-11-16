@@ -1,69 +1,86 @@
+
 # Mis Finanzas | Moneywise
 
-**Mis Finanzas** (Moneywise) es una aplicación web de gestión de finanzas personales que permite registrar ingresos y gastos, organizar movimientos y consultar información sobre la actividad financiera personal.
+Moneywise is a personal finance management web application designed to help users track their income and expenses, organize financial transactions, and monitor their financial balance.
 
-El proyecto busca ofrecer una experiencia sencilla, intuitiva y accesible para ayudar a los usuarios a comprender y organizar mejor sus finanzas.
+This project is being developed as a practical software development project and portfolio piece, focusing on building a functional application while applying modern web technologies and development practices.
 
-## Objetivo del proyecto
+## Features
 
-Desarrollar una aplicación web fullstack, bilingüe y responsive que permita gestionar las finanzas personales mediante herramientas de registro, organización y consulta de movimientos financieros.
+- Register income and expenses.
+- Edit existing transactions.
+- Delete transactions.
+- Assign categories to transactions.
+- View transaction history.
+- Calculate total income and expenses.
+- Display the current financial balance.
+- Persist transaction data using browser localStorage.
+- Responsive dashboard interface.
 
-El proyecto también tiene como objetivo aplicar buenas prácticas de arquitectura, desarrollo, testing, seguridad y documentación de software.
+## Technologies
 
-## Funcionalidades previstas
+- **Next.js 16** – React framework.
+- **React 19** – User interface library.
+- **TypeScript** – Static typing.
+- **CSS Modules** – Component-scoped styling.
+- **ESLint 9** – Code quality and linting.
+- **localStorage** – Client-side data persistence.
+- **Git and GitHub** – Version control and repository hosting.
 
-### MVP — Primera versión
+## Getting Started
 
-- Registro de usuarios.
-- Inicio y cierre de sesión.
-- Dashboard financiero.
-- Registro de ingresos y gastos.
-- Edición y eliminación de movimientos.
-- Organización mediante categorías.
-- Listado y consulta de movimientos.
-- Filtros por fecha y categoría.
-- Resumen de ingresos y gastos.
-- Interfaz en español argentino e inglés.
+### Prerequisites
 
-### Funcionalidades futuras
+Make sure you have installed:
 
-- Gráficos y estadísticas financieras.
-- Presupuestos mensuales.
-- Comparación entre períodos.
-- Exportación de movimientos a CSV.
-- Mejoras en los informes financieros.
+- Node.js 20 or later.
+- npm 10 or later.
 
-## Tecnologías
+### Installation
 
-| Área | Tecnología |
-|---|---|
-| Frontend | Next.js, React y TypeScript |
-| Backend | Python y FastAPI |
-| Base de datos | PostgreSQL |
-| Control de versiones | Git y GitHub |
-| Contenedores | Docker |
-| Integración continua | GitHub Actions |
+1. Clone the repository:
 
-## Internacionalización
+   ```bash
+   git clone https://github.com/DanielOstoic/mis-finanzas.git
+   ```
 
-La aplicación ofrecerá dos idiomas:
+2. Navigate to the project directory:
 
-- **Español argentino (`es-AR`):** idioma principal.
-- **Inglés (`en`):** idioma secundario.
+   ```bash
+   cd mis-finanzas
+   ```
 
-El nombre del producto se adaptará al idioma seleccionado:
+3. Install dependencies:
 
-- **Español:** Mis Finanzas.
-- **Inglés:** Moneywise.
+   ```bash
+   npm install
+   ```
 
-## Estado del proyecto
+4. Start the development server:
 
-**Etapa actual:** Preparación y planificación (M0).
+   ```bash
+   npm run dev
+   ```
 
-El proyecto se encuentra en su fase inicial de organización, definición de objetivos y preparación del entorno de desarrollo.
+5. Open http://localhost:3000 in your browser.
 
-Las funcionalidades indicadas representan el alcance previsto y todavía no están implementadas.
+## Project Status
 
-## Licencia
+The initial MVP and portfolio improvements have been implemented.
 
-Pendiente de definición.
+The application currently supports transaction management, financial summaries, local data persistence, and a responsive dashboard.
+
+## Future Improvements
+
+- Backend development using Python and FastAPI.
+- PostgreSQL database integration.
+- User authentication.
+- Advanced financial reports and charts.
+- Monthly budgets.
+- Transaction filtering.
+- CSV data export.
+- English and Spanish language support.
+
+## License
+
+License not yet defined.

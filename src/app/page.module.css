@@ -1,0 +1,175 @@
+:root {
+  --primary-white-color: #fbfcfc;
+  --primary-green-color: #055b65;
+  --primary-blue-color: #e4f1ea;
+  --primary-red-color: #f8e9e7;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background-color: var(--primary-blue-color);
+  color: rgb(63, 63, 63);
+  padding: 20px;
+  font-size: 20px;
+}
+
+.nav {
+  width: 100%;
+}
+
+.sidebar h1 {
+  font-size: 25px;
+  font-weight: bold;
+  color: var(--primary-green-color);
+  margin-bottom: 20px;
+}
+
+.sidebar h3 {
+  color: lightgray;
+  font-weight: bold;
+}
+
+.nav-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  list-style: none;
+  padding: 0;
+}
+
+.nav-list li {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.main-content {
+  flex-grow: 1;
+  background-color: var(--primary-white-color);
+  color: var(--primary-green-color);
+  padding: 20px;
+}
+
+.nav-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: 8px;
+}
+
+.nav-link:hover {
+  color: var(--primary-green-color);
+  background-color: var(--primary-white-color);
+  border: 2px var(--primary-white-color) solid;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 1px 3px 4px 2px lightgray;
+}
+
+.balance-card {
+  background-color: var(--primary-green-color);
+  color: white;
+  padding: 14px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px 3px lightgray;
+  margin: 2px;
+  margin-bottom: 24px;
+}
+
+.balance-title {
+  margin-bottom: 0px;
+}
+
+.balance-amount {
+  font-size: 32px;
+  font-weight: bold;
+  margin-top: 0px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "Inc-card Exp-card";
+  gap: 1em;
+}
+
+.income-card {
+  grid-area: Inc-card;
+  background-color: var(--primary-blue-color);
+}
+
+.expense-card {
+  grid-area: Exp-card;
+  background-color: var(--primary-red-color);
+}
+
+.income-card,
+.expense-card {
+  padding: 14px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px 3px lightgray;
+  margin: 2px;
+}
+
+.income-card h3,
+.expense-card h3 {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.income-card p,
+.expense-card p {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "Inc-card"
+      "Exp-card";
+    gap: 1em;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .movement-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .movement-form input, .movement-form select {
+    width: 100%;
+
+  }
+}
+
+.movement-item {
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+
+}

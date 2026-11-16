@@ -127,11 +127,6 @@ export default function Dashboard() {
                 Dashboard
               </Link>
             </li>
-            <li>
-              <Link className={styles["nav-link"]} href="/movimientos">
-                Movimientos
-              </Link>
-            </li>
           </ul>
         </nav>
       </aside>

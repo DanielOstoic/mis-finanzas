@@ -145,6 +145,8 @@ export default function Dashboard() {
             <p>${totalExpenses}</p>
           </div>
         </div>
+        <label htmlFor="capture-input">Escanear ticket</label>
+        <input type="file" accept="image/*" capture="environment" id="capture-input" />
         <form onSubmit={handleSubmit} className={styles["movement-form"]}>
           <label htmlFor="description">Descripción</label>
           <input

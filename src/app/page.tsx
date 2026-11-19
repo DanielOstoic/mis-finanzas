@@ -7,10 +7,14 @@ import type { Movement, MovementType } from "@/types/movement";
 import Link from "next/link";
 import { getMovements, saveMovements} from "@/lib/movementStorage"
 
+
 export default function Dashboard() {
   const [movements, setMovements] = useState<Movement[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentMovementId, setCurrentMovementId] = useState<string | null>(null);
+  const [ selectedFile, setSelectedFile ] = useState<File | null>(null);
+  const [ocrText, setOcrText] = useState('');
+
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
@@ -27,6 +31,30 @@ export default function Dashboard() {
     .reduce((total, current) => total + current.amount, 0);
 
   const balance: number = totalIncome - totalExpenses;
+
+  async function handleOCR() {
+    if (!selectedFile) {
+      return;
+    }
+
+    let worker = null;
+
+    try {
+      const { createWorker } = await import("tesseract.js");
+      worker  = await createWorker('spa');
+      const { data } = await  worker.recognize(selectedFile);
+      setOcrText(data.text);
+    }
+    catch (error) {
+      console.error(error);
+    }
+    finally {
+      if (worker) {
+        await worker.terminate();
+      }
+    }
+
+  }
 
   function handleEdit(movement: Movement) {
     setCurrentMovementId(movement.id);
@@ -145,8 +173,18 @@ export default function Dashboard() {
             <p>${totalExpenses}</p>
           </div>
         </div>
+
         <label htmlFor="capture-input">Escanear ticket</label>
-        <input type="file" accept="image/*" capture="environment" id="capture-input" />
+        <input 
+          type="file" 
+          accept="image/*" 
+          capture="environment" 
+          id="capture-input" 
+          onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null )}
+        />
+        <button onClick={handleOCR}>Procesar ticket</button>
+        <pre>{ocrText}</pre>
+
         <form onSubmit={handleSubmit} className={styles["movement-form"]}>
           <label htmlFor="description">Descripción</label>
           <input

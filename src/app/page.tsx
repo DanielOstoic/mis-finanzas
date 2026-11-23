@@ -84,6 +84,7 @@ export default function Dashboard() {
     }
 
     let worker = null;
+
     setIsProcessing(true);
     setReceiptItems([]);
 
@@ -109,6 +110,27 @@ export default function Dashboard() {
 
       setIsProcessing(false);
     }
+  }
+
+  function handleConfirmReceipt() {
+    if (receiptItems.length === 0) {
+      return;
+    }
+
+    const newMovements: Movement[] = receiptItems.map((item) => ({
+      id: crypto.randomUUID(),
+      description: item.description,
+      amount: item.amount,
+      type: "expense",
+      category: "alimentacion",
+      date: new Date().toISOString()
+    }));
+
+    setMovements((previous) => [...previous, ...newMovements]);
+
+    setReceiptItems([]);
+    setOcrText("");
+    setSelectedFile(null);
   }
 
   function handleEdit(movement: Movement) {
@@ -189,7 +211,7 @@ export default function Dashboard() {
       date: new Date().toISOString()
     };
 
-    setMovements((p) => [...p, new_movement]);
+    setMovements((previous) => [...previous, new_movement]);
 
     resetForm();
   }
@@ -213,18 +235,18 @@ export default function Dashboard() {
       <section className={styles["main-content"]}>
         <div className={styles["balance-card"]}>
           <h2 className={styles["balance-title"]}>Balance actual</h2>
-          <p className={styles["balance-amount"]}>${balance}</p>
+          <p className={styles["balance-amount"]}>${balance.toFixed(2)}</p>
         </div>
 
         <div className={styles["summary-grid"]}>
           <div className={styles["income-card"]}>
             <h3>Ingresos</h3>
-            <p>${totalIncome}</p>
+            <p>${totalIncome.toFixed(2)}</p>
           </div>
 
           <div className={styles["expense-card"]}>
             <h3>Gastos</h3>
-            <p>${totalExpenses}</p>
+            <p>${totalExpenses.toFixed(2)}</p>
           </div>
         </div>
 
@@ -242,8 +264,6 @@ export default function Dashboard() {
           {isProcessing ? "Procesando ticket..." : "Procesar ticket"}
         </button>
 
-        <pre>{ocrText}</pre>
-
         {receiptItems.length > 0 && (
           <section>
             <h2>Artículos detectados</h2>
@@ -251,14 +271,20 @@ export default function Dashboard() {
             {receiptItems.map((item, index) => (
               <div key={index}>
                 <p>{item.description}</p>
-                <p>${item.amount}</p>
+                <p>${item.amount.toFixed(2)}</p>
               </div>
             ))}
 
             <p>
               Total: $
-              {receiptItems.reduce((total, item) => total + item.amount, 0)}
+              {receiptItems
+                .reduce((total, item) => total + item.amount, 0)
+                .toFixed(2)}
             </p>
+
+            <button onClick={handleConfirmReceipt}>
+              Agregar artículos a movimientos
+            </button>
           </section>
         )}
 

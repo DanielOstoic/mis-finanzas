@@ -181,9 +181,9 @@ export default function Dashboard() {
           capture="environment" 
           id="capture-input" 
           onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null )}
-        />
+        /> <br/><br/>
         <button onClick={handleOCR}>Procesar ticket</button>
-        <pre>{ocrText}</pre>
+        <pre>{ocrText}</pre><br/><br/>
 
         <form onSubmit={handleSubmit} className={styles["movement-form"]}>
           <label htmlFor="description">Descripción</label>

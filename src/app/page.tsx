@@ -5,20 +5,26 @@ import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import type { Movement, MovementType } from "@/types/movement";
 import Link from "next/link";
-import { getMovements, saveMovements} from "@/lib/movementStorage"
+import { getMovements, saveMovements } from "@/lib/movementStorage";
 
+type ReceiptItem = {
+  description: string;
+  amount: number;
+};
 
 export default function Dashboard() {
   const [movements, setMovements] = useState<Movement[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentMovementId, setCurrentMovementId] = useState<string | null>(null);
-  const [ selectedFile, setSelectedFile ] = useState<File | null>(null);
-  const [ocrText, setOcrText] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [ocrText, setOcrText] = useState("");
+  const [receiptItems, setReceiptItems] = useState<ReceiptItem[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
-    type: ( "income" as MovementType ),
+    type: "income" as MovementType,
     category: "otros"
   });
 
@@ -32,57 +38,99 @@ export default function Dashboard() {
 
   const balance: number = totalIncome - totalExpenses;
 
+  async function processReceiptText(ocrText: string): Promise<ReceiptItem[]> {
+    const response = await fetch("/api/receipts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text: ocrText
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Error processing receipt");
+    }
+
+    const result: unknown = await response.json();
+
+    if (
+      typeof result !== "object" ||
+      result === null ||
+      !("items" in result) ||
+      !Array.isArray(result.items)
+    ) {
+      throw new Error("Invalid receipt response");
+    }
+
+    return result.items.filter(
+      (item): item is ReceiptItem =>
+        typeof item === "object" &&
+        item !== null &&
+        "description" in item &&
+        typeof item.description === "string" &&
+        item.description.trim() !== "" &&
+        "amount" in item &&
+        typeof item.amount === "number" &&
+        Number.isFinite(item.amount) &&
+        item.amount > 0
+    );
+  }
+
   async function handleOCR() {
-    if (!selectedFile) {
+    if (!selectedFile || isProcessing) {
       return;
     }
 
     let worker = null;
+    setIsProcessing(true);
+    setReceiptItems([]);
 
     try {
       const { createWorker } = await import("tesseract.js");
-      worker  = await createWorker('spa');
-      const { data } = await  worker.recognize(selectedFile);
+      worker = await createWorker("spa");
+
+      const { data } = await worker.recognize(selectedFile);
+
       setOcrText(data.text);
-    }
-    catch (error) {
-      console.error(error);
-    }
-    finally {
+
+      const result = await processReceiptText(data.text);
+
+      setReceiptItems(result);
+
+      console.log("Gemini results:", result);
+    } catch (error) {
+      console.error("Receipt processing error:", error);
+    } finally {
       if (worker) {
         await worker.terminate();
       }
-    }
 
+      setIsProcessing(false);
+    }
   }
 
   function handleEdit(movement: Movement) {
     setCurrentMovementId(movement.id);
-    setFormData(
-      {
-        description: movement.description,
-        amount: String(movement.amount),
-        type: movement.type,
-        category: movement.category
-      }
 
-    );
-
-
+    setFormData({
+      description: movement.description,
+      amount: String(movement.amount),
+      type: movement.type,
+      category: movement.category
+    });
   }
 
-
-
   useEffect(() => {
-    Promise.resolve().then(
-      () => {
-        setMovements(getMovements());
-        setIsLoaded(true);
-      });
+    Promise.resolve().then(() => {
+      setMovements(getMovements());
+      setIsLoaded(true);
+    });
   }, []);
 
   useEffect(() => {
-    if ( !isLoaded ) {
+    if (!isLoaded) {
       return;
     }
 
@@ -99,9 +147,9 @@ export default function Dashboard() {
     setFormData({
       description: "",
       amount: "",
-      type: ('income' as MovementType),
-      category: 'otros'
-    })
+      type: "income" as MovementType,
+      category: "otros"
+    });
   }
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -115,15 +163,20 @@ export default function Dashboard() {
       return;
     }
 
-    if(currentMovementId) {
-      setMovements(movements.map((m) => m.id === currentMovementId ? {...m,
-        description: formData.description,
-        amount: Number(formData.amount),
-        category: formData.category,
-        type: formData.type } : m));
+    if (currentMovementId) {
+      setMovements(movements.map((m) =>
+        m.id === currentMovementId
+          ? {
+              ...m,
+              description: formData.description,
+              amount: Number(formData.amount),
+              category: formData.category,
+              type: formData.type
+            }
+          : m
+      ));
 
       resetForm();
-
       return;
     }
 
@@ -133,14 +186,12 @@ export default function Dashboard() {
       amount: Number(formData.amount),
       type: formData.type,
       category: formData.category,
-      date: new Date().toISOString(),
+      date: new Date().toISOString()
     };
 
     setMovements((p) => [...p, new_movement]);
 
     resetForm();
-
-
   }
 
   return (
@@ -158,16 +209,19 @@ export default function Dashboard() {
           </ul>
         </nav>
       </aside>
+
       <section className={styles["main-content"]}>
         <div className={styles["balance-card"]}>
           <h2 className={styles["balance-title"]}>Balance actual</h2>
           <p className={styles["balance-amount"]}>${balance}</p>
         </div>
+
         <div className={styles["summary-grid"]}>
           <div className={styles["income-card"]}>
             <h3>Ingresos</h3>
             <p>${totalIncome}</p>
           </div>
+
           <div className={styles["expense-card"]}>
             <h3>Gastos</h3>
             <p>${totalExpenses}</p>
@@ -175,15 +229,38 @@ export default function Dashboard() {
         </div>
 
         <label htmlFor="capture-input">Escanear ticket</label>
-        <input 
-          type="file" 
-          accept="image/*" 
-          capture="environment" 
-          id="capture-input" 
-          onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null )}
-        /> <br/><br/>
-        <button onClick={handleOCR}>Procesar ticket</button>
-        <pre>{ocrText}</pre><br/><br/>
+
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          id="capture-input"
+          onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
+        />
+
+        <button onClick={handleOCR} disabled={isProcessing}>
+          {isProcessing ? "Procesando ticket..." : "Procesar ticket"}
+        </button>
+
+        <pre>{ocrText}</pre>
+
+        {receiptItems.length > 0 && (
+          <section>
+            <h2>Artículos detectados</h2>
+
+            {receiptItems.map((item, index) => (
+              <div key={index}>
+                <p>{item.description}</p>
+                <p>${item.amount}</p>
+              </div>
+            ))}
+
+            <p>
+              Total: $
+              {receiptItems.reduce((total, item) => total + item.amount, 0)}
+            </p>
+          </section>
+        )}
 
         <form onSubmit={handleSubmit} className={styles["movement-form"]}>
           <label htmlFor="description">Descripción</label>
@@ -217,7 +294,7 @@ export default function Dashboard() {
             value={formData.type}
             onChange={(e) => setFormData((previous) => ({
               ...previous,
-              type: (e.target.value as MovementType)
+              type: e.target.value as MovementType
             }))}
           >
             <option value="income">Ingreso</option>
@@ -241,15 +318,19 @@ export default function Dashboard() {
             <option value="otros">Otros</option>
           </select>
 
-          <button type="submit">{!currentMovementId ? 'Agregar movimiento' : 'Guardar cambios' }</button>
+          <button type="submit">
+            {!currentMovementId ? "Agregar movimiento" : "Guardar cambios"}
+          </button>
         </form>
 
         <section>
           <h2>{movements.length > 0 ? "Últimos movimientos" : ""}</h2>
+
           <div>
             {movements.map((m) => (
               <p key={m.id} className={styles["movement-item"]}>
-                {m.description} <br />
+                {m.description}
+                <br />
                 <button onClick={() => handleEdit(m)}>Editar</button>
                 <button onClick={() => handleDelete(m.id)}>Eliminar</button>
               </p>

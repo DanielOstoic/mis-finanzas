@@ -98,6 +98,7 @@
   grid-template-columns: 1fr 1fr;
   grid-template-areas: "Inc-card Exp-card";
   gap: 1em;
+  margin-bottom: 24px;
 }
 
 .income-card {
@@ -172,4 +173,90 @@
   align-items: center;
   gap: 1rem;
 
+}
+
+.button {
+  padding: 10px;
+  border: none;
+  border-radius: 13px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.button-primary {
+  color: white;
+  background-color: var(--primary-green-color);
+}
+
+.button-primary:hover {
+  filter: brightness(0.9);
+}
+
+.button-primary:active {
+  filter: brightness(0.7);
+}
+
+
+.button-secondary {
+  color: black;
+  background-color: var(--primary-blue-color);
+}
+
+.button-secondary:hover {
+  filter: brightness(0.9);
+}
+
+.button-secondary:active {
+  filter: brightness(0.7);
+}
+
+
+.button-danger {
+  color: black;
+  background-color: var(--primary-red-color);
+}
+
+.button-danger:hover {
+  filter: brightness(0.9);
+}
+
+.button-danger:active {
+  filter: brightness(0.7);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+input[type="file"]::file-selector-button {
+  background-color: var(--primary-green-color);
+  color: white;
+  border: none;
+  border-radius: 13px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button:hover {
+  filter: brightness(0.9);
+}
+
+input[type="file"]::file-selector-button:active {
+  filter: brightness(0.7);
+}
+
+
+input[type="file"]::file-selector-button:focus-visible {
+  outline: 2px solid rgb(82, 238, 165); 
+  outline-offset: 4px;
+}
+
+
+.movement-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }

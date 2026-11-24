@@ -260,7 +260,7 @@ export default function Dashboard() {
           onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
         />
 
-        <button onClick={handleOCR} disabled={isProcessing}>
+        <button className={styles.button+" "+styles["button-primary"]} onClick={handleOCR} disabled={isProcessing}>
           {isProcessing ? "Procesando ticket..." : "Procesar ticket"}
         </button>
 
@@ -282,7 +282,7 @@ export default function Dashboard() {
                 .toFixed(2)}
             </p>
 
-            <button onClick={handleConfirmReceipt}>
+            <button className={styles.button+" "+styles["button-primary"]} onClick={handleConfirmReceipt}>
               Agregar artículos a movimientos
             </button>
           </section>
@@ -344,7 +344,7 @@ export default function Dashboard() {
             <option value="otros">Otros</option>
           </select>
 
-          <button type="submit">
+          <button className={styles.button+" "+styles["button-primary"]} type="submit">
             {!currentMovementId ? "Agregar movimiento" : "Guardar cambios"}
           </button>
         </form>
@@ -354,12 +354,14 @@ export default function Dashboard() {
 
           <div>
             {movements.map((m) => (
-              <p key={m.id} className={styles["movement-item"]}>
+              <div key={m.id} className={styles["movement-item"]}>
                 {m.description}
                 <br />
-                <button onClick={() => handleEdit(m)}>Editar</button>
-                <button onClick={() => handleDelete(m.id)}>Eliminar</button>
-              </p>
+                <div className={styles["movement-actions"]}>
+                  <button className={styles.button+" "+styles["button-secondary"]} onClick={() => handleEdit(m)}>Editar</button>
+                  <button className={styles.button+" "+styles["button-danger"]} onClick={() => handleDelete(m.id)}>Eliminar</button>
+                </div>
+              </div>
             ))}
           </div>
         </section>
